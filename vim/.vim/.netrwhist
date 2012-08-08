@@ -1,0 +1,6 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/Users/jstarcher/devel/scholastic/newteacher/sites/all/modules/custom/s8c_site'
+let g:netrw_dirhist_2='/Users/jstarcher/devel/scholastic/newteacher/sites/all/modules/custom'
+let g:netrw_dirhist_3='/Users/jstarcher/devel/scholastic/newteacher/sites/all/modules/custom/s8c_site'
+let g:netrw_dirhist_4='/Users/jstarcher/tmp/scholastic_installation'
