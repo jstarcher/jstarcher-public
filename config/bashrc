@@ -1,0 +1,57 @@
+## Rename prompt
+export PS1=":) $ "
+export PS1='\u:\w\$ '
+
+## Handy functions
+alias ltree="ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/ /' -e 's/-/|/'"
+alias rehash='. ~/.profile'
+alias profile="vim ~/.profile"
+alias vimssh='ssh ~/.ssh/config'
+
+## General items for a better Bash experience
+alias p='pwd'
+alias e='exit'
+alias ll='ls -alh'
+alias rm='rm -i'
+alias cd..='cd ../'
+alias cdls='cd $1 && ls'
+alias svnup='svn up'
+alias sup='svn up'
+alias sst='svn st'
+
+## Drush command aliases
+alias dfra="drush fra --force -y"
+alias dcca="drush cc all"
+alias dup="drush updb -y"
+
+## OSX
+PLATFORM=`uname`
+if [ $PLATFORM = "Darwin" ];
+then
+  # Alias Preview app
+  preview() {
+    open -a "Preview.app" $1
+  }
+fi
+
+## Program Options
+export GREP_OPTIONS="--exclude=\*.svn\*"
+export CLICOLOR=1
+export LSCOLORS=ExFxCxDxBxegedabagacad
+export EDITOR='vim'
+
+## Exports
+export PATH=/opt/local/bin:/opt/local/sbin:/Users/jstarcher/bin:/usr/local/bin:/usr/local/sbin:$PATH
+
+## Use PHP 5.2 from MAMP
+PATH=/Applications/MAMP/bin/php5.3/bin:$PATH
+
+## Application specific aliases
+alias phplog='tail -f /Applications/MAMP/logs/php_error.log'
+alias apachelog='tail -f /Applications/MAMP/logs/apache_error_log'
+
+## Functions
+d7e() {
+  drush7 php-eval "$1"
+}
+
