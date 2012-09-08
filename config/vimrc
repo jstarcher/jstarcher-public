@@ -52,7 +52,7 @@ map <leader>o :tabedit<Space>
 map <leader>t :CommandT<CR>
 
 " Open a custom Commad-T instace with \T
-map <leader>T :CommandT<Space>~/Sites/
+map <leader>T :CommandT<Space>~/devel/
 
 " Open a custom Commad-T instace with \T
 map <leader>P :CommandT<Space>~/Sites/platform-shared/<CR>
@@ -99,8 +99,9 @@ map <c-space> ?
 "set expandtab
 
 set wildignore+=*.o,*.obj,.git,.hg/**,*.pyc,*.png,*.gif,*.jpg,*.jpeg
-let g:CommandTAcceptSelectionTabMap='<CR>'
 let g:CommandTMaxCachedDirectories=0
+let g:CommandTAcceptSelectionMap = '<C-t>'
+let g:CommandTAcceptSelectionTabMap = '<CR>'
 let g:CommandTSelectNextMap=['<C-n>', '<C-j>', '<Down>']
 let g:CommandTSelectPrevMap=['<C-p>', '<C-k>', '<Up>']
 
