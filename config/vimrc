@@ -20,6 +20,15 @@ set smarttab
 set expandtab
 
 set nocompatible
+
+" SECURITY NOTE: The VIM software has had several remote vulnerabilities
+" discovered within VIM's modeline support.  It allowed remote attackers to
+" execute arbitrary code as the user running VIM.  All known problems
+" have been fixed, but the FreeBSD Security Team advises that VIM users
+" use 'set nomodeline' in ~/.vimrc to avoid the possibility of trojaned
+" text files.
+set nomodeline
+
 set shell=bash\ -l
 syntax on
 set number
@@ -43,7 +52,7 @@ map <leader>o :tabedit<Space>
 map <leader>t :CommandT<CR>
 
 " Open a custom Commad-T instace with \T
-map <leader>T :CommandT<Space>~/Sites/
+map <leader>T :CommandT<Space>~/devel/
 
 " Open a custom Commad-T instace with \T
 map <leader>P :CommandT<Space>~/Sites/platform-shared/<CR>
@@ -90,8 +99,9 @@ map <c-space> ?
 "set expandtab
 
 set wildignore+=*.o,*.obj,.git,.hg/**,*.pyc,*.png,*.gif,*.jpg,*.jpeg
-let g:CommandTAcceptSelectionTabMap='<CR>'
 let g:CommandTMaxCachedDirectories=0
+let g:CommandTAcceptSelectionMap = '<C-t>'
+let g:CommandTAcceptSelectionTabMap = '<CR>'
 let g:CommandTSelectNextMap=['<C-n>', '<C-j>', '<Down>']
 let g:CommandTSelectPrevMap=['<C-p>', '<C-k>', '<Up>']
 
