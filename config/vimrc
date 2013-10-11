@@ -70,8 +70,11 @@ map <leader>[ :tabprev<CR>
 map <leader>] :tabnext<CR>
 map <leader>- :tabfirst<CR>
 map <leader>= :tablast<CR>
-" Toggle paste mode wiht \p
+" Toggle paste mode with \p
 set pastetoggle=<leader>p
+
+" Format json
+map <leader>J :%!python -m json.tool<cr>
 
 " Toggle line numbers with \n
 nmap <leader>n :set invnumber<CR>
