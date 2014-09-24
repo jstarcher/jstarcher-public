@@ -1,0 +1,33 @@
+# Variables {
+  EXAMPLE="$HOME/devel/example"
+# }
+
+##
+# Setup a tmux environment for Django App
+##
+function mpj() {
+  BASE="$HOME/devel"
+  cd $BASE
+ 
+  # Start mysql
+  mysql.server start
+
+  # Setup tmux
+  tmux start-server
+  tmux new-session -d -s example -n vim
+  tmux new-window -t example:1 -n django
+  tmux new-window -t example:2 -n solr
+  tmux new-window -t example:3 -n compass
+  tmux new-window -t example:4 -n other
+ 
+  tmux send-keys -t example:0 "cd $BASE/django/example; vim" C-m
+  tmux send-keys -t example:1 "source $HOME/devel/python-packages/example/bin/activate; cd $BASE/django/example; python manage.py runserver" C-m
+  tmux send-keys -t example:2 "cd $BASE/apache-solr-4.0.0/example; java -jar start.jar -Djetty.port=8990" C-m
+  tmux send-keys -t example:3 "cd $BASE/django/example; rvm use ruby-2.0.0-p0; compass watch" C-m
+  tmux send-keys -t example:4 "source $HOME/devel/python-packages/example/bin/activate; cd $BASE/django/example" C-m
+ 
+  tmux select-window -t example:0
+  tmux attach-session -t example
+}
+
+
