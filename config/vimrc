@@ -1,3 +1,5 @@
+""" Many thanks to Silvio Gutierrez of sgawebsites.com for many of these tips and tricks """
+
 if has("autocmd")
  " Drupal *.module and *.install files.
   augroup module
