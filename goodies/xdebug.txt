@@ -1,0 +1,2 @@
+xdebug.profiler_enable_trigger
+    If you enable this option, profiles will only be generated if you pass a GET/POST parameter or cookie with the name XDEBUG_PROFILE, e.g., http://localhost/script.php?XDEBUG_PROFILE. You must not enable xdebug.profiler_enable if you use this option.

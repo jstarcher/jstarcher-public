@@ -1,0 +1,248 @@
+************************************************************************
+************************************************************************
+Version 16.09.05                              My personal mini SED howto
+************************************************************************
+************************************************************************
+
+Using Linux now for some years, I started to learn sed. The begining was
+hard. And even now, from time to time the fabulous command sed drives me
+crazy. There might be nice pages out in the web, like the spectacular 1-
+liners, but somehow most of them do not work at all on my machine!
+So what's wrong (with me)? I use stupid SuSE-Linux 9.2 and Kernel 2.6.8.
+Finally I bought some books about sed and awk,  written in an unreadable
+programmers language (yeah, I'm only a stupid end-user!). Didn't help.
+So, let's start from the beginning and go step by step.
+
+________________________________________________________________________
+Which version of SED do I use?
+
+
+me@linux:~&gt; sed -V
+GNU sed version 4.0.6
+Copyright (C) 2003 Free Software Foundation, Inc.
+This is free software;  see the source for copying conditions.  There is
+NO warranty; not even for  MERCHANTABILITY  or  FITNESS FOR A PARTICULAR
+PURPOSE, to the extent permitted by law.
+________________________________________________________________________
+Read the man pages, I did it, at least quickly...
+
+me@linux:~&gt; man sed
+________________________________________________________________________
+
+
+========================================================================
+First Part: Substitution and Adresses
+========================================================================
+________________________________________________________________________
+
+sed 's/wrong pattern/good pattern/' wrong.file
+
+substitutes in EVERY line of a file called wrong.file the first and only
+the first occurrence of "wrong pattern"  by  "good pattern" and displays
+the corrected text at standard output. Check the output until everything
+is ok, then redirect the output (you can not overwrite the old file)
+
+sed 's/wrong pattern/good pattern/' wrong.file &gt; good.file
+
+________________________________________________________________________
+Another way to redirect the output:
+
+cat wrong.txt | sed 's/wrong pattern/good pattern/g' &gt; good.txt
+________________________________________________________________________
+If you want to replace the "wrong pattern" globally, e.g.  several times
+a line, then enter
+
+sed 's/wrong pattern/good pattern/g' wrong.file &gt; good.file
+
+________________________________________________________________________
+To replace the "wrong pattern" only once at the very first occurrence we
+need to adress the substitution. Either we know at which line the "wrong
+pattern" is located, i.e. line 13, then type
+
+sed '13s/wrong pattern/good pattern/' wrong.file &gt; good.file
+
+
+If we don't know the position of the "wrong pattern", we need to give an
+adress range where sed should do the substitution, i.e.
+
+sed '1,13s/wrong pattern/good pattern/' wrong.file &gt; good.file
+
+
+but in an general case we won't know if the "wrong pattern" occurres ex-
+actly once in the first 13 lines... But we can define the range with the
+pattern itself, so we expect
+
+sed '1,/wrong pattern/s/wrong pattern/good pattern/' wrong.file
+
+to do the job: start at line 1 and substitute until the first occurrence
+is found. Unfortunately this doesn't work IF the "wrong pattern" appears
+in the first AND second line! Because the 1 activates the first line the
+second adress of the range is at least the second line. In this case the
+"wrong pattern" will be substiuted in both lines. What we need is
+
+sed '0,/wrong pattern/s/wrong pattern/good pattern/' wrong.file
+
+to prevent the activation of the second line where the "wrong pattern"
+could appear again.
+
+________________________________________________________________________
+Now, how do we manage to find the n-th occurrence of "wrong pattern"? Hm
+I don't know yet... If we know that the "wrong pattern" appears only ex-
+actly once per line, we could do it in some steps:  find all occurrences
+with grep, print the line numbers with awk, and get the n-th line number
+with sed, e.g. the 6th line number
+
+grep -i -n 'wrong pattern' wrong.file| awk -F: '{print $1}'| sed -n '6p'
+
+with options -i (case insensitive) and -n (print line numbers) for grep,
+-F: (use : as field seperator) in awk and -n (suppres printing whole fi-
+le) in sed.
+As we can't put this expression in `apostrophes` in a sed expression, we
+have to save it in a varible (NO spaces between = !)
+
+lineno=`here comes above expression`
+sed ''$lineno's/wrong pattern/good pattern/' wrong.file &gt; good.file
+
+But what can I do in the general case with several occurrences of "wrong
+pattern" per line? We search the net and find a very important property:
+Instead of using the g for global substitution, one can tell sed to per-
+form the substitution at the nth occurrence of each line with a number n
+(any value from 1 through 512) in place of the g.
+________________________________________________________________________
+
+
+
+========================================================================
+Second Part: More Substitutions
+========================================================================
+________________________________________________________________________
+If we want to use variables instead of patterns we need to protect the $
+sign, which means 'end of line' without protection:
+
+sed 's/wrong pattern/'$good'/g'
+________________________________________________________________________
+If we want to do several substitutions at once, type
+
+sed -e 's/Second/Third/' -e 's/Third/Fourth/' wrong.txt &gt; good.txt
+________________________________________________________________________
+You may use a script file instead: type
+
+------bof------
+s/Second/Third/
+s/Third/Fourth/
+
+------eof------
+
+with a last blank line into a file called, e.g. script.sed, and call
+
+sed -f script.sed wrong.txt &gt; good.txt
+________________________________________________________________________
+Add a " \" (space+backslash) at the end of each line:
+
+sed 's/$/ \\/g' wrong.file &gt; good.file
+________________________________________________________________________
+Howto replace apostrophs? Quote them within single quotes
+
+sed 's/can not/can'\''t/g' wrong.txt &gt; good.txt
+________________________________________________________________________
+Howto replace periods? Qoute them with [.]. Example: delete period and
+rest of the line:
+
+sed 's/[.].*$//' wrong.file &gt; good.file
+________________________________________________________________________
+Howto quote bracket, i.e. add a backslash before the bracket? Qoute them
+and add 2more backslashes:
+
+sed 's/\[/\\\[/g'
+________________________________________________________________________
+
+
+========================================================================
+Third Part: Appending
+========================================================================
+________________________________________________________________________
+Append content of file year.txt at line 3 of data.txt.
+
+sed '3 r year.txt' data.txt &gt; newdata.txt
+________________________________________________________________________
+Append after each line with the string "pattern" a line with text "new".
+
+sed '/pattern/anew' wrong.file
+________________________________________________________________________
+Append after each line a new line with text "new".
+
+sed 'a/new' wrong.file
+________________________________________________________________________
+Append at the end of file wrong.tex "\caption{}" with content of special
+.txt in the brakets, where special.txt has lots of special characters.
+
+sed '$a\\\caption{'`more special.txt`'}' wrong.tex &gt; good.tex
+________________________________________________________________________
+
+
+========================================================================
+Fourth Part: Deleting
+========================================================================
+________________________________________________________________________
+Delete line 5 of file output.ps
+
+sed '/wrong pattern/d'  wrong.file &gt; good.file
+________________________________________________________________________
+Delete line 5 of file output.ps
+
+sed '5 d' output.ps &gt; output2.ps
+________________________________________________________________________
+Delete first 3 characters of each line, if followed by a blank
+
+sed 's/^... //g' test.txt
+________________________________________________________________________
+Delete first 5 characters of each line
+
+sed 's/^.\{5\}//g' test.txt
+________________________________________________________________________
+Delete the first part of some lines, e.g. in the line below delete the
+everything before Mandalay:
+Cafe Del Mar - Volumen Seis - 05 - Mandalay - Beautiful (7'' Canny Mix)
+
+sed 's/.*'[0-9][0-9]' - //g' test.txt
+________________________________________________________________________
+Delete all characters except the 5 first ones
+
+cut -c 1-5
+________________________________________________________________________
+Suggestion from SED1LINERS: Delete all blank lines:
+
+sed '/^$/ d' test.txt
+
+Does work on a SuSE Box 9.2, but did not work with me on a SuSE Box 9.0!
+Use option e, than it should work always:
+
+sed -e '/^$/ d' test.txt
+________________________________________________________________________
+Suggestion from SED1LINERS: Delete leading blank lines at top of file:
+sed '/./,$!d' file
+
+But does not work for me... Yes, it does work now on SuSE 9.2!
+________________________________________________________________________
+Suggestion from SED1LINERS: Delete trailing blank lines at end of file:
+
+sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba' file
+
+But does not work for me... Yes, it does work now on SuSE 9.2!
+________________________________________________________________________
+Retrieve all info of ps-files needed for psfrag in LaTeX:
+
+1) do it for several similar files, if they are in the same directory
+2) delete the rest of line
+3) replace brackets
+4) delete consecutive duplicated lines
+5) delete nonconsecutive duplicated lines
+
+ for i in fs_25_52*; do grep 'show grestore' $i &gt;&gt; psfrag.txt ; done
+ sed 's/) show .*$/}/g' psfrag.txt &gt; frag.txt
+ sed 's/(/\\psfrag{/g' frag.txt &gt; psfrag.txt
+ sed '$!N; /^\(.*\)\n\1$/!P; D'
+ sed -n 'G; s/\n/&amp;&amp;/; /^\([ -~]*\n\).*\n\1/d; s/\n//; h; P'
+
+and now you can copy paste the whole thing into your LaTeX file.
+________________________________________________________________________

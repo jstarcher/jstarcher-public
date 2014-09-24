@@ -1,0 +1,6 @@
+/**
+ * Find all trailing commas and the end of object notations in javascript.
+ * Fixes IE JS errors
+ */
+,\s*\n+\s*[\}\)\]]
+find -exec ,\s*\n+\s*[\}\)\]]
